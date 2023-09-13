@@ -21,10 +21,18 @@ class GGD(nn.Module):
         self.lin = nn.Linear(n_h, n_h)
 
     def forward(self, seq1, seq2, adj, sparse):
+        # print(f"shape1= {seq1.shape}")
+        # print(f"shape2= {seq2.shape}")
+        # exit(0)
+
         h_1 = self.gcn(seq1, adj, sparse)
         h_2 = self.gcn(seq2, adj, sparse)
         sc_1 = ((self.lin(h_1.squeeze(0))).sum(1)).unsqueeze(0)
         sc_2 = ((self.lin(h_2.squeeze(0))).sum(1)).unsqueeze(0)
+
+        print(f"shape1= {sc_1.shape}")
+        print(f"shape2= {sc_2.shape}")
+        exit(0)
 
         logits = torch.cat((sc_1, sc_2), 1)
         return logits
@@ -60,9 +68,11 @@ def aug_feature_dropout(input_feat, drop_percent=0.2):
     return aug_input_feat
 
 def get_free_gpu():
-    os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >tmp')
-    memory_available = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
-    return np.argmax(memory_available)
+    # os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >tmp')
+    # memory_available = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
+    # return np.argmax(memory_available)
+
+    return 7
 
 if __name__ == '__main__':
     acc_results = []
